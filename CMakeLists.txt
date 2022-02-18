@@ -2,8 +2,7 @@ cmake_minimum_required(VERSION 3.22)
 
 project(Wordle VERSION 0.1)
 
-# The main executable
-add_executable(wordle main.c)
+add_executable(wordle)
 
 # Use the global version so all libraries can access it.
 include_directories(include)
@@ -13,7 +12,7 @@ include_directories(include)
 # If the variable is set
 if(DEFINED ENV{OUTPUT})
 	# And the directory exists
-	if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/$ENV{OUTPUT}  AND IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/$ENV{OUTPUT})
+	if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/output/$ENV{OUTPUT}  AND IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/output/$ENV{OUTPUT})
 		# Copy to a cmake variable
 		set(OUTPUT $ENV{OUTPUT})
 	# If it doesn't exist
@@ -29,7 +28,10 @@ else()
 endif()
 
 # Build the library
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/${OUTPUT})
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/output/${OUTPUT})
+
+add_subdirectory(core)
 
 #And link it
 target_link_libraries(wordle wordle_${OUTPUT})
+target_link_libraries(wordle wordle_core)
