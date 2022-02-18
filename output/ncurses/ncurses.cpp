@@ -62,6 +62,12 @@ int setup(){
 	return 0;
 }
 
+// Run the program
+int run(){
+	//TODO: impliment
+	return 1;
+}
+
 // Clean up
 int cleanup(){
 	getch();
