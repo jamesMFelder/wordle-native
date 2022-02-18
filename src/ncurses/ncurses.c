@@ -1,27 +1,13 @@
 // SPDX-License-Identifier: GPLv3-or-later
 // Copyright (c) 2022 James McNaughton Felder
 
-// For controlled screen output
+// Our function definitions
+#include <output.h>
+// Functions for controlling the screen
 #include <ncurses.h>
-// Enabling wide characters with the users locale
-#include <locale.h>
 
-// Fill the buffer with the word of the day.
-// It is not null-terminated!
-// It is always fully uppercase.
-// TODO: use an external wordlist
-void getWord(char word[5]){
-	word[0]='H';
-	word[1]='E';
-	word[2]='L';
-	word[3]='L';
-	word[4]='O';
-}
-
-int main(){
-	// Use wide characters with the users locale
-	setlocale(LC_ALL, "");
-
+// Setup the screen
+int setup(){
 	// Initialize ncurses
 	initscr();
 	// Basic sanity check for a big enough screen
@@ -41,10 +27,6 @@ int main(){
 	// Allow use of the keypad
 	keypad(stdscr, TRUE);
 
-	// Get the word of the day
-	char curWord[5];
-	getWord(curWord);
-
 	// Draw the board
 	// Inner lines
 	mvhline(LINES/2-4, COLS/2-3, 0, 7);
@@ -63,12 +45,13 @@ int main(){
 	mvaddch(LINES/2+6, COLS/2-3, ACS_LLCORNER);
 	mvaddch(LINES/2+6, COLS/2+3, ACS_LRCORNER);
 	move(LINES/2-5, COLS/2-2);
+	refresh();
 
-	//TODO: loop reading keypresses and displaying them
-	getch();
-
-	// Clean up the terminal
-	// (should be already setup as sigint and sigterm handler by ncurses)
-	endwin();
 	return 0;
+}
+
+// Clean up
+int cleanup(){
+	getch();
+	return endwin();
 }
