@@ -44,6 +44,18 @@ int setup(){
 	mvaddch(LINES/2-6, COLS/2+3, ACS_URCORNER);
 	mvaddch(LINES/2+6, COLS/2-3, ACS_LLCORNER);
 	mvaddch(LINES/2+6, COLS/2+3, ACS_LRCORNER);
+	// left-hand side t junctions
+	mvaddch(LINES/2, COLS/2-3, ACS_LTEE);
+	mvaddch(LINES/2-2, COLS/2-3, ACS_LTEE);
+	mvaddch(LINES/2+2, COLS/2-3, ACS_LTEE);
+	mvaddch(LINES/2-4, COLS/2-3, ACS_LTEE);
+	mvaddch(LINES/2+4, COLS/2-3, ACS_LTEE);
+	// right-hand side t junctions
+	mvaddch(LINES/2, COLS/2+3, ACS_RTEE);
+	mvaddch(LINES/2-2, COLS/2+3, ACS_RTEE);
+	mvaddch(LINES/2+2, COLS/2+3, ACS_RTEE);
+	mvaddch(LINES/2-4, COLS/2+3, ACS_RTEE);
+	mvaddch(LINES/2+4, COLS/2+3, ACS_RTEE);
 	move(LINES/2-5, COLS/2-2);
 	refresh();
 
