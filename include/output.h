@@ -4,6 +4,9 @@
 #ifndef OUTPUT_H
 #define OUTPUT_H
 
+// Used by some functions
+#include <array>
+
 #define WORD_LEN 5
 #define NUM_GUESSES 6
 
@@ -36,6 +39,9 @@ enum char_status{
 // The non null-terminated guess array is what should be checked.
 // After calling, the result array will contain a char_status
 // for each of the corresponding elements in the guess array.
-void check_guess(char guess[WORD_LEN], enum char_status result[WORD_LEN]);
+std::array<enum char_status, WORD_LEN> check_guess(const std::array<char, WORD_LEN> guess);
+
+// Called by the output for each char to determine whether it is valid
+bool is_valid(unsigned char c);
 
 #endif //OUTPUT_H
