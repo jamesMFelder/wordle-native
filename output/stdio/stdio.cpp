@@ -15,16 +15,19 @@ using std::cin;
 
 // Setup the screen
 int setup(){
-	std::cout << "Welcome to wordle.\n" << "Type your first guess and press enter.\n" << "Only the first 5 characters will be counted." << std::endl;
+	cout << "Welcome to wordle.\n" << "Type your first guess and press enter.\n" << "Only the first 5 characters will be counted." << std::endl;
 	return 0;
 }
 
-
 // Run the program
 int run(){
-	std::map<int, std::string> correct={{CORRECT, "✓"}, {BAD_PLACE, "?"}, {WRONG, "✗"}};
+	static const std::string green="\033[92m";
+	static const std::string yellow="\033[93m";
+	static const std::string reset="\033[0m";
+	static std::map<int, std::string> correct={{CORRECT, green+"█"+reset}, {BAD_PLACE, yellow+"█"+reset}, {WRONG, "█"}};
 	std::array<char, WORD_LEN> guess;
 	std::array<enum char_status, WORD_LEN> guess_correctness;
+
 	// For each guess
 	for(unsigned short guess_count=0; guess_count<NUM_GUESSES; guess_count++){
 		// Prompt the user (+1 because normal people don't count from zero).
