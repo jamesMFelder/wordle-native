@@ -5,6 +5,9 @@
 #include <output.h>
 // Functions for controlling the screen
 #include <ncurses.h>
+// For exceptional errors
+#include <exception>
+#include <stdexcept>
 
 // Setup the screen
 int setup(){
@@ -18,16 +21,18 @@ int setup(){
 		fputs("Needs to be at least 7x13 characters.\n", stderr);
 		return 1;
 	}
+	// We use color just like the official app
+	start_color();
+	// Setup the colors
+	init_pair(CORRECT, COLOR_BLACK, COLOR_GREEN);
+	init_pair(BAD_PLACE, COLOR_BLACK, COLOR_YELLOW);
+	init_pair(WRONG, COLOR_BLACK, COLOR_BLUE);
 	// Character at a time input
 	cbreak();
-	// Don't automatically echo the characters
-	noecho();
-	// Don't automatically output every character to the screen on ^C
-	intrflush(stdscr, FALSE);
 	// Allow use of the keypad
 	keypad(stdscr, TRUE);
 
-	// Draw the board
+	// Draw the board (TODO: don't hardcode the size?)
 	// Inner lines
 	mvhline(LINES/2-4, COLS/2-3, 0, 7);
 	mvhline(LINES/2-2, COLS/2-3, 0, 7);
@@ -62,10 +67,109 @@ int setup(){
 	return 0;
 }
 
+class Location{
+	public:
+		Location():column(0),row(0){}
+		Location(unsigned short column, unsigned short row){
+			if(!(row<NUM_GUESSES && column<WORD_LEN)){
+				throw std::out_of_range("Cannot move outside of the grid.");
+			}
+			this->column=column;
+			this->row=row;
+			syncToScreen();
+		}
+		void moveLeft(){
+			if(column!=0){
+				column--;
+				syncToScreen();
+			}
+		}
+		void moveRight(){
+			if(column!=WORD_LEN-1){
+				column++;
+				syncToScreen();
+			}
+		}
+		void moveDown(){
+			if(row!=NUM_GUESSES){
+				row+=2;
+				syncToScreen();
+			}
+		}
+		void moveHome(){
+			column=0;
+			syncToScreen();
+		}
+		void moveEnd(){
+			column=WORD_LEN-1;
+			syncToScreen();
+		}
+		//Only call if you have moved the cursor, but not through this.
+		void syncToScreen(){
+			move(LINES/2-5+row, COLS/2-2+column);
+		}
+	private:
+		unsigned short column, row;
+};
+
 // Run the program
 int run(){
-	//TODO: impliment
-	return 1;
+	char guess[WORD_LEN];
+	std::array<enum char_status, WORD_LEN> guess_correctness;
+	Location where; //Where we are typing
+	// For each guess
+	for(unsigned short guess_count=0; guess_count<NUM_GUESSES; guess_count++){
+		// Read in a char at a time
+		getnstr(guess, WORD_LEN);
+		for(unsigned short guess_char=0; guess_char<WORD_LEN; guess_char++){
+			// Handle invalid characters
+			if(!is_valid(guess[guess_char])){
+				// By retrying
+				// Reset the line
+				for(guess_char=0, where.moveHome(); guess_char<WORD_LEN; guess_char++, where.moveRight()){
+					addch(' ');
+				}
+				// Retry guess instead of moving on to the next
+				guess_count--;
+				// Do the next run of the outer loop (counts as redoing because we deincremented guess_count)
+				goto retry;
+			}
+			// Lowercase it for simplicity
+			guess[guess_char]=tolower(guess[guess_char]);
+		}
+		{
+			// Get the correctness of each character
+			guess_correctness=check_guess(guess);
+			// Keep track of if everything is good
+			bool all_correct=true;
+			// Output everything
+			where.moveHome();
+			for(unsigned short guess_char=0; guess_char<WORD_LEN; guess_char++, where.moveRight()){
+				chgat(1, 0, guess_correctness[guess_char], NULL);
+				// If something is wrong, the whole thing can't be correct
+				if(guess_correctness[guess_char]!=CORRECT){
+					all_correct=false;
+				}
+			}
+			// If they entered the right word.
+			if(all_correct){
+				auto cursor_visibility=curs_set(0);
+				getch();
+				if(cursor_visibility!=ERR){
+					curs_set(cursor_visibility);
+				}
+				// Finish
+				return 0;
+			}
+		}
+		where.moveDown();
+		// Jump here if you need to retry the current guess (coming from inside another for loop)
+		// Comes after the moveDown() because we are retrying, not moving on to the next guess.
+		// I think this is the correct thing to do because the app doesn't even let you enter an invalid character.
+		retry:
+		where.moveHome();
+	}
+	return 0;
 }
 
 // Clean up

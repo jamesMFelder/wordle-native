@@ -29,10 +29,10 @@ int cleanup();
 
 // Guess correctness (for output: color info)
 enum char_status{
+	UNSPECIFIED,
 	CORRECT,
 	BAD_PLACE,
 	WRONG,
-	UNSPECIFIED
 };
 
 // Called by the output when it gets a guess.
@@ -40,6 +40,7 @@ enum char_status{
 // After calling, the result array will contain a char_status
 // for each of the corresponding elements in the guess array.
 std::array<enum char_status, WORD_LEN> check_guess(const std::array<char, WORD_LEN> guess);
+std::array<enum char_status, WORD_LEN> check_guess(const char guess[WORD_LEN]);
 
 // Called by the output for each char to determine whether it is valid
 bool is_valid(unsigned char c);
