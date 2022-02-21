@@ -174,6 +174,5 @@ int run(){
 
 // Clean up
 int cleanup(){
-	getch();
 	return endwin();
 }
