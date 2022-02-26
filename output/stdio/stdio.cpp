@@ -20,7 +20,7 @@ int setup(){
 }
 
 // Run the program
-int run(){
+bool run(){
 	static const std::string green="\033[92m";
 	static const std::string yellow="\033[93m";
 	static const std::string reset="\033[0m";
@@ -73,16 +73,27 @@ int run(){
 		std::cout << std::endl;
 		// If they entered the right word.
 		if(all_correct){
-			// Output a message
-			std::cout << "Congragulations! You guessed the word!" << std::endl;
-			// And finish
-			return 0;
+			// Finish
+			return true;
 		}
 	}
-	return 0;
+	return false;
 }
 
 // Clean up
-int cleanup(){
+int cleanup(bool attempt){
+	// If the word was guessed
+	if(attempt){
+		// Output a message
+		std::cout << "Congragulations! You guessed the word!" << std::endl;
+	}
+	else{
+		std::cout << "The word was ";
+		auto word=return_word();
+		for(auto c: word){
+			std::cout << c;
+		}
+		std::cout << '.'<< std::endl;
+	}
 	return 0;
 }

@@ -16,16 +16,15 @@
 int setup();
 
 // Run the program.
-// Return 0 on success, non-zero on failure.
-// A non-zero error will be propogated out of main.
+// Return true if it was guessed, false otherwise
 // Should give the user NUM_GUESSES.
 // I'm not explaining the rules here.
-int run();
+bool run();
 
 // Clean up
 // Returns 0 on success, non-zero on failure.
 // The return value will be propogated out of main unless another error occured.
-int cleanup();
+int cleanup(bool attempt);
 
 // Guess correctness (for output: color info)
 enum char_status{
@@ -41,6 +40,8 @@ enum char_status{
 // for each of the corresponding elements in the guess array.
 std::array<enum char_status, WORD_LEN> check_guess(const std::array<char, WORD_LEN> guess);
 std::array<enum char_status, WORD_LEN> check_guess(const char guess[WORD_LEN]);
+
+std::array<char, WORD_LEN> return_word();
 
 // Called by the output for each char to determine whether it is valid
 bool is_valid(unsigned char c);

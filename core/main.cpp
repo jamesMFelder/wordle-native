@@ -177,6 +177,11 @@ std::array<enum char_status, WORD_LEN> check_guess(const char guess[WORD_LEN]){
 	return result;
 }
 
+// Return the full word if it was never guessed
+std::array<char, WORD_LEN> return_word(){
+	return wordOfDay;
+}
+
 // Run the program
 int main(int argc, char *argv[]){
 	// Use wide characters with the users locale
@@ -250,23 +255,18 @@ int main(int argc, char *argv[]){
 	int word_error;
 	word_error=setWord(wordlist_file_name, argv[0]);
 	if(word_error!=0){
-		cleanup();
 		return word_error;
 	}
 
 	int setup_error;
 	setup_error=setup();
 	if(setup_error!=0){
-		cleanup();
+		cleanup(false);
 		return setup_error;
 	}
 
-	int run_error;
-	run_error=run();
-	if(run_error!=0){
-		cleanup();
-		return run_error;
-	}
+	bool attempt;
+	attempt=run();
 
-	return cleanup();
+	return cleanup(attempt);
 }

@@ -36,11 +36,11 @@ int setup(){
 	// Initialize ncurses
 	initscr();
 	// Basic sanity check for a big enough screen
-	if(LINES<13 || COLS<9){
+	if(LINES<14 || COLS<9){
 		//Too small for anything fancy
 		endwin();
 		fputs("Error: too small screen.\n", stderr);
-		fputs("Needs to be at least 9x13 characters.\n", stderr);
+		fputs("Needs to be at least 9x14 characters.\n", stderr);
 		return 1;
 	}
 	// We use color just like the official app
@@ -141,7 +141,7 @@ class Location{
 };
 
 // Run the program
-int run(){
+bool run(){
 	char guess[WORD_LEN];
 	std::array<enum char_status, WORD_LEN> guess_correctness;
 	Location where; //Where we are typing
@@ -183,7 +183,7 @@ int run(){
 			// If they entered the right word.
 			if(all_correct){
 				// Finish
-				return 0;
+				return true;
 			}
 		}
 		// Update the onscreen keyboard
@@ -195,12 +195,19 @@ int run(){
 		retry:
 		where.moveHome();
 	}
-	return 0;
+	return false;
 }
 
 // Wait for a keypress and then clean up.
-int cleanup(){
+int cleanup(bool attempt){
 	auto cursor_visibility=curs_set(0);
+	// If the user didn't guess correctly show the word
+	if(!attempt){
+		auto real_word=return_word();
+		for(auto count=0; count<WORD_LEN; count++){
+			mvaddch(LINES/2+7, COLS/2-2+count, real_word[count]);
+		}
+	}
 	getch();
 	if(cursor_visibility!=ERR){
 		curs_set(cursor_visibility);
