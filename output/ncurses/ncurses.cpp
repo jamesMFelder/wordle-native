@@ -182,11 +182,6 @@ int run(){
 			}
 			// If they entered the right word.
 			if(all_correct){
-				auto cursor_visibility=curs_set(0);
-				getch();
-				if(cursor_visibility!=ERR){
-					curs_set(cursor_visibility);
-				}
 				// Finish
 				return 0;
 			}
@@ -203,7 +198,12 @@ int run(){
 	return 0;
 }
 
-// Clean up
+// Wait for a keypress and then clean up.
 int cleanup(){
+	auto cursor_visibility=curs_set(0);
+	getch();
+	if(cursor_visibility!=ERR){
+		curs_set(cursor_visibility);
+	}
 	return endwin();
 }
