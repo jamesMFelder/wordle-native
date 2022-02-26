@@ -12,6 +12,8 @@ using std::cin;
 
 // Our function definitions
 #include <output.h>
+//Accessing the core of the game
+#include <core.h>
 
 // Setup the screen
 int setup(){

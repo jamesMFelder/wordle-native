@@ -3,6 +3,8 @@
 
 // Our function definitions
 #include <output.h>
+// Access the core of the game
+#include <core.h>
 // Functions for controlling the screen
 #include <ncurses.h>
 // For exceptional errors

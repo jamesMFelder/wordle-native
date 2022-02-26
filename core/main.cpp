@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: GPLv3-or-later
 // Copyright (c) 2022 James McNaughton Felder
 
+// Function prototypes
+#include <core.h>
 // For controlled screen output
 #include <output.h>
 // Enabling wide characters with the users locale
