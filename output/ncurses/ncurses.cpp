@@ -8,25 +8,50 @@
 // For exceptional errors
 #include <exception>
 #include <stdexcept>
+// For keeping track of what letters are guessed for the on-screen keyboard
+#include <array>
+
+class onScreenKeyboard{
+	public:
+		onScreenKeyboard(){}
+		void drawToScreen(int x, int y){
+			// Add read-only keyboard on the left
+			for(char c=0; c<26; c++){
+				mvaddch(c/2+y, c%2+x, (c+'a') | COLOR_PAIR(type[c]));
+			}
+			refresh();
+		}
+
+		// Pass in lowercase! Do not pass in duplicates!
+		void addLetter(char letter, char_status value){type[letter-'a']=value;}
+
+	private:
+		std::array<enum char_status, 26> type{UNSPECIFIED};
+};
+
+onScreenKeyboard virtKeyboard;
 
 // Setup the screen
 int setup(){
 	// Initialize ncurses
 	initscr();
 	// Basic sanity check for a big enough screen
-	if(LINES<13 || COLS<7){
+	if(LINES<13 || COLS<9){
 		//Too small for anything fancy
 		endwin();
 		fputs("Error: too small screen.\n", stderr);
-		fputs("Needs to be at least 7x13 characters.\n", stderr);
+		fputs("Needs to be at least 9x13 characters.\n", stderr);
 		return 1;
 	}
 	// We use color just like the official app
 	start_color();
 	// Setup the colors
+#define COLOR_GREY 8
+	init_color(COLOR_GREY, 500, 500, 500);
 	init_pair(CORRECT, COLOR_BLACK, COLOR_GREEN);
 	init_pair(BAD_PLACE, COLOR_BLACK, COLOR_YELLOW);
-	init_pair(WRONG, COLOR_BLACK, COLOR_BLUE);
+	init_pair(WRONG, COLOR_BLACK, COLOR_GREY);
+	init_pair(UNSPECIFIED, COLOR_BLACK, COLOR_WHITE);
 	// Character at a time input
 	cbreak();
 	// Allow use of the keypad
@@ -61,6 +86,8 @@ int setup(){
 	mvaddch(LINES/2+2, COLS/2+3, ACS_RTEE);
 	mvaddch(LINES/2-4, COLS/2+3, ACS_RTEE);
 	mvaddch(LINES/2+4, COLS/2+3, ACS_RTEE);
+	// Add read-only keyboard on the left
+	virtKeyboard.drawToScreen(COLS/2-5, LINES/2-6);
 	move(LINES/2-5, COLS/2-2);
 	refresh();
 
@@ -146,6 +173,7 @@ int run(){
 			where.moveHome();
 			for(unsigned short guess_char=0; guess_char<WORD_LEN; guess_char++, where.moveRight()){
 				chgat(1, 0, guess_correctness[guess_char], NULL);
+				virtKeyboard.addLetter(guess[guess_char], guess_correctness[guess_char]);
 				// If something is wrong, the whole thing can't be correct
 				if(guess_correctness[guess_char]!=CORRECT){
 					all_correct=false;
@@ -162,6 +190,8 @@ int run(){
 				return 0;
 			}
 		}
+		// Update the onscreen keyboard
+		virtKeyboard.drawToScreen(COLS/2-5, LINES/2-6);
 		where.moveDown();
 		// Jump here if you need to retry the current guess (coming from inside another for loop)
 		// Comes after the moveDown() because we are retrying, not moving on to the next guess.
