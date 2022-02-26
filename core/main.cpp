@@ -54,10 +54,18 @@ int setWord(const std::string &fname, const char *progname){
 			// We have all the words we are going to get
 			break;
 		}
-		// Otherwise (we have a full word)
-		else{
+		// Otherwise (we have at least a full word)
+		// Unless more than WORD_LEN characters in a row are valid we should store it
+		else if(!is_valid(wordlist_file.peek())){
 			// Store it
 			wordlist.push_back(cur_word);
+		}
+		// There is a valid character after the word (it is part of a larger one)
+		else{
+			// Run to the end of it
+			while(is_valid(wordlist_file.peek())){
+				wordlist_file.ignore();
+			}
 		}
 	}
 
