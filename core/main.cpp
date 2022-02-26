@@ -19,6 +19,8 @@
 #include <random>
 // std::string is not std::array<char, n>
 #include <algorithm>
+// Randomizing the random number generator
+#include <chrono>
 
 // The word of the day all lowercase.
 static std::array<char, WORD_LEN> wordOfDay;
@@ -67,8 +69,9 @@ int setWord(const std::string &fname, const char *progname){
 	}
 
 	//randomly pick word from wordlist and save it
-	std::default_random_engine engine;
-	std::uniform_int_distribution<unsigned> random(0, wordlist.size());
+	unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+	std::default_random_engine engine(seed);
+	std::uniform_int_distribution<unsigned> random(0, wordlist.size()-1);
 	auto which=random(engine);
 	wordOfDay=wordlist[which];
 
