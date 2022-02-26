@@ -119,7 +119,7 @@ class Location{
 			}
 		}
 		void moveDown(){
-			if(row!=NUM_GUESSES){
+			if(row!=NUM_GUESSES*2){
 				row+=2;
 				syncToScreen();
 			}
