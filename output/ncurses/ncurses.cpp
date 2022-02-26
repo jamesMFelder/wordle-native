@@ -45,6 +45,7 @@ int setup(){
 	}
 	// We use color just like the official app
 	start_color();
+	use_default_colors();
 	// Setup the colors
 #define COLOR_GREY 8
 	init_color(COLOR_GREY, 500, 500, 500);
