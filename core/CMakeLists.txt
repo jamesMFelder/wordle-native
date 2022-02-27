@@ -1,2 +1,2 @@
 # The main executable
-add_library(wordle_core OBJECT main.cpp)
+add_library(wordle_core OBJECT core.cpp)

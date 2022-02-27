@@ -6,9 +6,13 @@
 
 // Used by some functions
 #include <array>
+#include <string>
 
 #define WORD_LEN 5
 #define NUM_GUESSES 6
+
+// Set the word of the day
+int setWord(const std::string &fname, const char *progname);
 
 // Guess correctness (for output: color info)
 enum char_status{

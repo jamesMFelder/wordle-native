@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.22)
 
 project(Wordle VERSION 0.1)
 
-add_executable(wordle)
+add_executable(wordle main/main.cpp)
 
 # Use the global version so all libraries can access it.
 include_directories(include)
