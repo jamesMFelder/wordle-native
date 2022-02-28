@@ -32,6 +32,10 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/output/${OUTPUT})
 
 add_subdirectory(core)
 
-#And link it
+# And link it
 target_link_libraries(wordle wordle_${OUTPUT})
 target_link_libraries(wordle wordle_core)
+
+# Always run tests as they are still inexpensive
+include(CTest)
+add_subdirectory(tests)
